@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { StepLayout, NavButtons } from "@/components/StepLayout";
 import { useProject } from "@/lib/project-context";
 import { computeCosts, computeFinancials, fmtPct } from "@/lib/calculations";
+import { generateProjectPDF } from "@/lib/pdf-export";
 
 export const Route = createFileRoute("/sensitivity")({ component: SensitivityPage });
 
@@ -36,9 +37,7 @@ function SensitivityPage() {
     return newTdc > 0 ? ((stab - newTdc) / newTdc) * 100 : 0;
   };
 
-  const exportPDF = () => {
-    if (typeof window !== "undefined") window.print();
-  };
+  const exportPDF = () => generateProjectPDF(data);
   const saveProject = () => {
     try {
       localStorage.setItem("groundwork:saved:" + Date.now(), JSON.stringify(data));
