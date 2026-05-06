@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { supabase } from "./supabase";
 
-interface AuthUser { email: string; }
+interface AuthUser { email: string; id: string; }
 interface AuthCtx {
   user: AuthUser | null;
   ready: boolean;
@@ -10,47 +11,37 @@ interface AuthCtx {
 }
 
 const Ctx = createContext<AuthCtx | null>(null);
-const KEY = "groundwork:auth";
-const USERS = "groundwork:users";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) setUser(JSON.parse(raw));
-    } catch {}
-    setReady(true);
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ? { id: session.user.id, email: session.user.email ?? "" } : null);
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ? { id: session.user.id, email: session.user.email ?? "" } : null);
+      setReady(true);
+    });
+    return () => sub.subscription.unsubscribe();
   }, []);
 
-  const persist = (u: AuthUser | null) => {
-    setUser(u);
-    if (u) localStorage.setItem(KEY, JSON.stringify(u));
-    else localStorage.removeItem(KEY);
-  };
-
-  const getUsers = (): Record<string, string> => {
-    try { return JSON.parse(localStorage.getItem(USERS) || "{}"); } catch { return {}; }
-  };
-
   const signUp = async (email: string, password: string) => {
-    const users = getUsers();
-    if (users[email]) throw new Error("Account already exists for this email");
-    users[email] = password;
-    localStorage.setItem(USERS, JSON.stringify(users));
-    persist({ email });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/site-analysis` },
+    });
+    if (error) throw new Error(error.message);
   };
 
   const signIn = async (email: string, password: string) => {
-    const users = getUsers();
-    if (!users[email]) throw new Error("No account found. Sign up first.");
-    if (users[email] !== password) throw new Error("Incorrect password");
-    persist({ email });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw new Error(error.message);
   };
 
-  const signOut = () => persist(null);
+  const signOut = () => { supabase.auth.signOut(); };
 
   return <Ctx.Provider value={{ user, ready, signUp, signIn, signOut }}>{children}</Ctx.Provider>;
 }
