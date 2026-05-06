@@ -1,8 +1,9 @@
 {
   "buildCommand": "vite build",
-  "outputDirectory": ".output/public",
+  "outputDirectory": "dist/client",
   "framework": null,
+  "cleanUrls": true,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    { "source": "/((?!assets/).*)", "destination": "/_shell.html" }
   ]
 }
