@@ -9,8 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SiteAnalysisRouteImport } from './routes/site-analysis'
+import { Route as SensitivityRouteImport } from './routes/sensitivity'
+import { Route as ProgramRouteImport } from './routes/program'
+import { Route as FinancialSummaryRouteImport } from './routes/financial-summary'
+import { Route as ConstructionCostsRouteImport } from './routes/construction-costs'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SiteAnalysisRoute = SiteAnalysisRouteImport.update({
+  id: '/site-analysis',
+  path: '/site-analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SensitivityRoute = SensitivityRouteImport.update({
+  id: '/sensitivity',
+  path: '/sensitivity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgramRoute = ProgramRouteImport.update({
+  id: '/program',
+  path: '/program',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinancialSummaryRoute = FinancialSummaryRouteImport.update({
+  id: '/financial-summary',
+  path: '/financial-summary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConstructionCostsRoute = ConstructionCostsRouteImport.update({
+  id: '/construction-costs',
+  path: '/construction-costs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +55,116 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/construction-costs': typeof ConstructionCostsRoute
+  '/financial-summary': typeof FinancialSummaryRoute
+  '/program': typeof ProgramRoute
+  '/sensitivity': typeof SensitivityRoute
+  '/site-analysis': typeof SiteAnalysisRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/construction-costs': typeof ConstructionCostsRoute
+  '/financial-summary': typeof FinancialSummaryRoute
+  '/program': typeof ProgramRoute
+  '/sensitivity': typeof SensitivityRoute
+  '/site-analysis': typeof SiteAnalysisRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/construction-costs': typeof ConstructionCostsRoute
+  '/financial-summary': typeof FinancialSummaryRoute
+  '/program': typeof ProgramRoute
+  '/sensitivity': typeof SensitivityRoute
+  '/site-analysis': typeof SiteAnalysisRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/construction-costs'
+    | '/financial-summary'
+    | '/program'
+    | '/sensitivity'
+    | '/site-analysis'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/construction-costs'
+    | '/financial-summary'
+    | '/program'
+    | '/sensitivity'
+    | '/site-analysis'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/construction-costs'
+    | '/financial-summary'
+    | '/program'
+    | '/sensitivity'
+    | '/site-analysis'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  ConstructionCostsRoute: typeof ConstructionCostsRoute
+  FinancialSummaryRoute: typeof FinancialSummaryRoute
+  ProgramRoute: typeof ProgramRoute
+  SensitivityRoute: typeof SensitivityRoute
+  SiteAnalysisRoute: typeof SiteAnalysisRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/site-analysis': {
+      id: '/site-analysis'
+      path: '/site-analysis'
+      fullPath: '/site-analysis'
+      preLoaderRoute: typeof SiteAnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sensitivity': {
+      id: '/sensitivity'
+      path: '/sensitivity'
+      fullPath: '/sensitivity'
+      preLoaderRoute: typeof SensitivityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/program': {
+      id: '/program'
+      path: '/program'
+      fullPath: '/program'
+      preLoaderRoute: typeof ProgramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financial-summary': {
+      id: '/financial-summary'
+      path: '/financial-summary'
+      fullPath: '/financial-summary'
+      preLoaderRoute: typeof FinancialSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/construction-costs': {
+      id: '/construction-costs'
+      path: '/construction-costs'
+      fullPath: '/construction-costs'
+      preLoaderRoute: typeof ConstructionCostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +177,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  ConstructionCostsRoute: ConstructionCostsRoute,
+  FinancialSummaryRoute: FinancialSummaryRoute,
+  ProgramRoute: ProgramRoute,
+  SensitivityRoute: SensitivityRoute,
+  SiteAnalysisRoute: SiteAnalysisRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
