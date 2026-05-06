@@ -152,7 +152,8 @@ export function generateProjectPDF(data: ProjectData) {
     },
     didParseCell: (h) => {
       const subtotalRows = ["Hard Costs Subtotal", "Soft Costs Subtotal"];
-      if (h.section === "body" && subtotalRows.includes(String(h.row.raw[1]))) {
+      const raw = h.row.raw as unknown as string[];
+      if (h.section === "body" && Array.isArray(raw) && subtotalRows.includes(String(raw[1]))) {
         h.cell.styles.fontStyle = "bold";
         h.cell.styles.fillColor = [235, 235, 235];
       }
